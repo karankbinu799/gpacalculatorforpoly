@@ -1,0 +1,17 @@
+{
+  "name": "system-info-app",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "ts-node src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "fastify": "^4.24.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.1"
+  }
+}
