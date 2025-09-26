@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aesthetic Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 350px;
+            width: 100%;
+        }
+
+        .display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .display input {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 300;
+            text-align: right;
+            outline: none;
+            width: 100%;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .operator {
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        .operator:hover {
+            background: rgba(255, 107, 107, 0.5);
+        }
+
+        .equals {
+            background: rgba(72, 187, 120, 0.3);
+        }
+
+        .equals:hover {
+            background: rgba(72, 187, 120, 0.5);
+        }
+
+        .clear {
+            background: rgba(237, 137, 54, 0.3);
+        }
+
+        .clear:hover {
+            background: rgba(237, 137, 54, 0.5);
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 400px) {
+            .calculator {
+                padding: 20px;
+            }
+            
+            button {
+                height: 50px;
+                font-size: 1rem;
+            }
+            
+            .display input {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <input type="text" id="display" readonly>
+        </div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="clear" onclick="deleteLast()">⌫</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button class="equals" onclick="calculate()" rowspan="2">=</button>
+            
+            <button class="zero" onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '';
+        let operator = '';
+        let previousInput = '';
+
+        function appendToDisplay(value) {
+            if (['+', '-', '*', '/'].includes(value)) {
+                if (currentInput !== '') {
+                    if (previousInput !== '' && operator !== '') {
+                        calculate();
+                    }
+                    previousInput = currentInput;
+                    operator = value;
+                    currentInput = '';
+                    display.value = previousInput + ' ' + (value === '*' ? '×' : value) + ' ';
+                }
+            } else {
+                currentInput += value;
+                if (operator !== '') {
+                    display.value = previousInput + ' ' + (operator === '*' ? '×' : operator) + ' ' + currentInput;
+                } else {
+                    display.value = currentInput;
+                }
+            }
+        }
+
+        function calculate() {
+            if (previousInput !== '' && currentInput !== '' && operator !== '') {
+                let result;
+                const prev = parseFloat(previousInput);
+                const current = parseFloat(currentInput);
+                
+                switch (operator) {
+                    case '+':
+                        result = prev + current;
+                        break;
+                    case '-':
+                        result = prev - current;
+                        break;
+                    case '*':
+                        result = prev * current;
+                        break;
+                    case '/':
+                        result = current !== 0 ? prev / current : 'Error';
+                        break;
+                    default:
+                        return;
+                }
+                
+                display.value = result;
+                currentInput = result.toString();
+                previousInput = '';
+                operator = '';
+            }
+        }
+
+        function clearDisplay() {
+            display.value = '';
+            currentInput = '';
+            previousInput = '';
+            operator = '';
+        }
+
+        function deleteLast() {
+            if (currentInput !== '') {
+                currentInput = currentInput.slice(0, -1);
+                if (operator !== '') {
+                    display.value = previousInput + ' ' + (operator === '*' ? '×' : operator) + ' ' + currentInput;
+                } else {
+                    display.value = currentInput;
+                }
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9' || key === '.') {
+                appendToDisplay(key);
+            } else if (['+', '-', '*', '/'].includes(key)) {
+                appendToDisplay(key);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                deleteLast();
+            }
+        });
+    </script>
+</body>
+</html>
